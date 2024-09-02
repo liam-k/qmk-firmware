@@ -18,6 +18,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "action.h"
 #include QMK_KEYBOARD_H
+#include <math.h>
 
 #define BW_TAP_TIME 200  //configure max tap time, 200ms here
 
