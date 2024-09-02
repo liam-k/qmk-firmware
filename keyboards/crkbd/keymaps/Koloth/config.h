@@ -26,6 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define BOTH_SHIFTS_TURNS_ON_CAPS_WORD
 
-#define POINTING_DEVICE_ROTATION_90
+// #define POINTING_DEVICE_ROTATION_90
 #define MOUSE_EXTENDED_REPORT
-#define PIMORONI_TRACKBALL_SCALE    
+#define PIMORONI_TRACKBALL_SCALE 5
