@@ -16,55 +16,215 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "action.h"
+#include <math.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include QMK_KEYBOARD_H
 
+#define BW_TAP_TIME 200  //configure max tap time, 200ms here
+
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  [0] = LAYOUT_split_3x6_3(
-  //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-       KC_TAB,    KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                         KC_Y,    KC_U,    KC_I,    KC_O,   KC_P,  KC_BSPC,
-  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL,    KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                         KC_H,    KC_J,    KC_K,    KC_L, KC_SCLN, KC_QUOT,
-  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT,    KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                         KC_N,    KC_M, KC_COMM,  KC_DOT, KC_SLSH,  KC_ESC,
-  //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, TL_LOWR,  KC_SPC,     KC_ENT, TL_UPPR, KC_RALT
-                                      //`--------------------------'  `--------------------------'
+    [0] = LAYOUT_split_3x6_3(
+        KC_ESC,   KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                      KC_Y,    KC_U,  KC_I,  KC_O, KC_LBRC, KC_P,
+        LT(3, KC_TAB), KC_A, CTL_T(KC_S), OPT_T(KC_D), CMD_T(KC_F), KC_G,  KC_H, CMD_T(KC_J), OPT_T(KC_K), CTL_T(KC_L), KC_SCLN, LT(2,KC_QUOT),
 
-  ),
+        LT(1, KC_ESC),  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                      KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, LT(2,KC_BSPC),
+                           LT(2,KC_TAB), LT(3, KC_SPACE), OSM(MOD_LSFT),   KC_MS_BTN1, OSM(MOD_RSFT), LT(1,KC_ENT)
+    ),
+    [1] = LAYOUT_split_3x6_3(
+        KC_TRNS,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,         	 KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC,
+        KC_TRNS,  KC_NO,   KC_TRNS, KC_TRNS, KC_TRNS, KC_NO,        	KC_LEFT, MT(MOD_LGUI,KC_DOWN), MT(MOD_LALT|MOD_RALT,KC_UP), MT(MOD_LCTL|MOD_RCTL,KC_RGHT), KC_NO, KC_TRNS,
+        KC_TRNS,  RGB_TOG, KC_NO,   KC_NO,  KC_NO,  KC_NO,              	KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_NO,  KC_TRNS,
+                           KC_TRNS, KC_TRNS, KC_TRNS,                       KC_MS_BTN1, KC_MS_BTN2, KC_MS_BTN3
+    ),
+    [2] = LAYOUT_split_3x6_3(
+        KC_TAB,   S(KC_1), KC_BSPC, KC_UP,   KC_DEL,  S(KC_5),              S(KC_6), KC_7,    KC_8,    KC_9,    S(KC_P), KC_BSPC,
+        KC_LCTL,  LAG(KC_LEFT), KC_LEFT, KC_DOWN, KC_RGHT, LAG(KC_RGHT),    KC_0,    KC_4,    KC_5,    KC_6,    KC_BSLS, KC_GRV,
+        KC_LSFT,  KC_NO,   KC_TAB,  KC_SPC,  KC_ENT,  KC_NO,                KC_0,    KC_1,    KC_2,    KC_3,    KC_ENT,  S(KC_GRV),
+                           KC_LGUI, KC_TRNS, KC_SPC,                        KC_MS_BTN1, KC_MS_BTN2, KC_MS_BTN3
+    ),
+    [3] = LAYOUT_split_3x6_3(
 
-  [1] = LAYOUT_split_3x6_3(
-  //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-       KC_TAB,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                         KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_BSPC,
-  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      KC_LEFT, KC_DOWN,   KC_UP,KC_RIGHT, XXXXXXX, XXXXXXX,
-  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, _______,  KC_SPC,     KC_ENT, _______, KC_RALT
-                                      //`--------------------------'  `--------------------------'
-  ),
-
-  [2] = LAYOUT_split_3x6_3(
-  //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-       KC_TAB, KC_EXLM,   KC_AT, KC_HASH,  KC_DLR, KC_PERC,                      KC_CIRC, KC_AMPR, KC_ASTR, KC_LPRN, KC_RPRN, KC_BSPC,
-  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LCTL, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      KC_MINS,  KC_EQL, KC_LBRC, KC_RBRC, KC_BSLS,  KC_GRV,
-  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      KC_LSFT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      KC_UNDS, KC_PLUS, KC_LCBR, KC_RCBR, KC_PIPE, KC_TILD,
-  //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, _______,  KC_SPC,     KC_ENT, _______, KC_RALT
-                                      //`--------------------------'  `--------------------------'
-  ),
-
-  [3] = LAYOUT_split_3x6_3(
-  //,-----------------------------------------------------.                    ,-----------------------------------------------------.
-        QK_BOOT, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      RGB_TOG, RGB_HUI, RGB_SAI, RGB_VAI, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      RGB_MOD, RGB_HUD, RGB_SAD, RGB_VAD, XXXXXXX, XXXXXXX,                      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          KC_LGUI, _______,  KC_SPC,     KC_ENT, _______, KC_RALT
-                                      //`--------------------------'  `--------------------------'
-  )
+    	KC_ESC,   LALT(KC_Q),    LALT(KC_W),    LALT(KC_E),    LALT(KC_R),    LALT(KC_T),   LALT(KC_Y),    LALT(KC_U),    LALT(KC_I),    LALT(KC_O),    LALT(KC_P),    LALT(KC_LBRC),
+     	KC_TRNS, LALT(KC_A), LALT(KC_S), LALT(KC_D), LALT(KC_F), LALT(KC_G), LALT(KC_H), LALT(KC_J), LALT(KC_K),LALT(KC_L), LALT(KC_SCLN),LALT(KC_QUOT),
+      KC_ESC,  LALT(KC_Z),    LALT(KC_X),    LALT(KC_C),    LALT(KC_V),    LALT(KC_B),                      LALT(KC_N),    LALT(KC_M),    LALT(KC_COMM), LALT(KC_DOT),  LALT(KC_SLSH), KC_BSPC,
+                           KC_TRNS, KC_TRNS, KC_TRNS,                       KC_MS_BTN1, KC_MS_BTN2, KC_MS_BTN3
+    )
 };
+// Modify these alues to adjust the scrolling speed
+#define SCROLL_DIVISOR_H 50.0
+#define SCROLL_DIVISOR_V 50.0
+
+// Variables to store accumulated scroll values
+float scroll_accumulated_h = 0;
+float scroll_accumulated_v = 0;
+
+// Modify these to adjust non-linear mouse scaling
+#define MAX_SCALE 2
+#define MIN_SCALE 1
+#define GROWTH_FACTOR 1.8
+#define MOMENTUM 0.01
+
+// Variable to store an exponential moving average scaling factor to denoise the non-linear scaling
+float accumulated_factor = MIN_SCALE;
+
+// Arrow keys slight slowing
+#define ARROW_STEP 26
+#define ARROW_THRESH 2
+#define ARROW_RESET_THRESH 1
+int arrow_mode = 0;
+int arrow_x = 0;
+int arrow_y = 0;
+
+// Alt-Tab parameteres
+#define ALT_TAB_STEP 46
+int accumulated_alt_tab = 0;
+int pressed_command = 0;
+
+#define ALT_TAB_LAYER 1
+#define SCROLL_LAYER 3
+#define ARROW_LAYER 2
+// add non-linear scaling to all mouse movements
+void ps2_mouse_moved_user(report_mouse_t* mouse_report) {
+    // alt-tab operation
+    if (layer_state_is(ALT_TAB_LAYER)) {
+        // send alt-tab when on this layer. On first mouse movement, press
+        // command.  Accumulate and sent tab or shift tab.  Release command
+        // when you leave this layer.
+
+        if ((mouse_report->x != 0) && (pressed_command == 0)) {
+          pressed_command = 1;
+          register_code(KC_LGUI);
+        }
+        accumulated_alt_tab += mouse_report->x;
+
+        // process queued clicks
+        if (accumulated_alt_tab <= -ALT_TAB_STEP){
+            tap_code16(LSFT(KC_TAB));
+            accumulated_alt_tab += ALT_TAB_STEP;
+        }
+        if (accumulated_alt_tab >= ALT_TAB_STEP) {
+            tap_code(KC_TAB);
+            accumulated_alt_tab -= ALT_TAB_STEP;
+        }
+
+        // return a null report
+        mouse_report->x = 0;
+        mouse_report->y = 0;
+    }
+
+    // arrow key emulation
+    if (layer_state_is(ARROW_LAYER)) {
+        // with the trackpoint, it is nice to have it lock into a single
+        // direction of travel until it is released
+
+        if (arrow_mode == 0) {
+          if (abs(mouse_report->x) > ARROW_THRESH) {
+            arrow_mode = 1;
+          }
+          if (abs(mouse_report->y) > ARROW_THRESH) {
+            arrow_mode = 2;
+          }
+        }
+        if (arrow_mode == 1) {
+          if (mouse_report->x > ARROW_RESET_THRESH) {
+            arrow_x += mouse_report->x - ARROW_RESET_THRESH;
+            if (arrow_x > ARROW_STEP) {
+              arrow_x = 0;
+              tap_code(KC_RIGHT);
+            }
+          }
+          else if (mouse_report->x < -ARROW_RESET_THRESH) {
+            arrow_x += -mouse_report->x - ARROW_RESET_THRESH;
+            if (arrow_x > ARROW_STEP) {
+              arrow_x = 0;
+              tap_code(KC_LEFT);
+            }
+          }
+          else {
+            arrow_mode = 0;
+            arrow_x = 0;
+          }
+        }
+        if (arrow_mode == 2) {
+          if (mouse_report->y > ARROW_RESET_THRESH) {
+            arrow_y += mouse_report->y - ARROW_RESET_THRESH;
+            if (arrow_y > ARROW_STEP) {
+              arrow_y = 0;
+              tap_code(KC_DOWN);
+            }
+          }
+          else if (mouse_report->y < -ARROW_RESET_THRESH) {
+            arrow_y += -mouse_report->y - ARROW_RESET_THRESH;
+            if (arrow_y > ARROW_STEP) {
+              arrow_y = 0;
+              tap_code(KC_UP);
+            }
+          }
+          else {
+            arrow_mode = 0;
+            arrow_x = 0;
+            arrow_y = 0;
+          }
+        }
+
+        // return a null report
+        mouse_report->x = 0;
+        mouse_report->y = 0;
+    }
+
+    // compute the size of the last mouse movement
+    float mouse_length = sqrtf(mouse_report->x*mouse_report->x + mouse_report->y*mouse_report->y);
+
+    // compute an instantaneous scaling factor and update exponential moving average
+    float factor =  GROWTH_FACTOR*mouse_length+ MIN_SCALE;
+    accumulated_factor = accumulated_factor*(1-MOMENTUM) + factor*MOMENTUM;
+
+    if (accumulated_factor > MAX_SCALE) {
+        // clamp the scaling factor to avoid overflowing mouse_report
+        mouse_report->x *= MAX_SCALE;
+        mouse_report->y *= MAX_SCALE;
+    }
+    else {
+        // scale up the mouse movement by the average factor
+        mouse_report->x = (int16_t)(mouse_report->x * accumulated_factor);
+        mouse_report->y = (int16_t)(mouse_report->y * accumulated_factor);
+    }
+
+    // switch to scrolling on every layer but 2 (where my mousekeys live)
+    if (layer_state_is(SCROLL_LAYER)) {
+        // Calculate and accumulate scroll values based on mouse movement and divisors
+        scroll_accumulated_h += (float)mouse_report->x / SCROLL_DIVISOR_H;
+        scroll_accumulated_v += (float)mouse_report->y / SCROLL_DIVISOR_V;
+
+        // Assign integer parts of accumulated scroll values to the mouse report
+        mouse_report->h = (int16_t)scroll_accumulated_h;
+        mouse_report->v = -(int16_t)scroll_accumulated_v;
+
+        // Update accumulated scroll values by subtracting the integer parts
+        scroll_accumulated_h -= (int16_t)scroll_accumulated_h;
+        scroll_accumulated_v -= (int16_t)scroll_accumulated_v;
+
+        // Clear the X and Y values of the mouse report
+        mouse_report->x = 0;
+        mouse_report->y = 0;
+    }
+}
+
+layer_state_t layer_state_set_user(layer_state_t state) {
+  if ((!layer_state_is(ALT_TAB_LAYER)) && (pressed_command == 1)) {
+    // if you are not on layer 3, and command is pressed, release it.
+    pressed_command = 0;
+    unregister_code(KC_LGUI);
+  }
+
+  if ((!layer_state_is(ARROW_LAYER)) && (arrow_mode != 0)) {
+    // if you are not on layer 1, and the arrow mode is not zero, make it zero.
+    arrow_mode = 0;
+    arrow_x = 0;
+    arrow_y = 0;
+  }
+  return state;
+}
