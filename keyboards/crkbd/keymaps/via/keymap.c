@@ -20,18 +20,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include "features/achordion.h"
+
 #include QMK_KEYBOARD_H
-
-#define BW_TAP_TIME 200  //configure max tap time, 200ms here
-
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [0] = LAYOUT_split_3x6_3(
-        KC_ESC,   KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                      KC_Y,    KC_U,  KC_I,  KC_O, KC_LBRC, KC_P,
+        KC_ESC,   KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                      LT(2,KC_Y),    KC_U,  KC_I,  KC_O, KC_LBRC, KC_P,
         LT(3, KC_TAB), KC_A, CTL_T(KC_S), OPT_T(KC_D), CMD_T(KC_F), KC_G,  KC_H, CMD_T(KC_J), OPT_T(KC_K), CTL_T(KC_L), KC_SCLN, LT(2,KC_QUOT),
 
-        LT(1, KC_ESC),  KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                      KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, LT(2,KC_BSPC),
-                           LT(2,KC_TAB), LT(3, KC_SPACE), OSM(MOD_LSFT),   KC_MS_BTN1, OSM(MOD_RSFT), LT(1,KC_ENT)
+        LT(1, KC_ESC),   LT(1,KC_Z),    KC_X,    KC_C,    KC_V,    KC_B,      KC_N,    KC_M,    KC_COMM, KC_DOT,  LT(2,	KC_SLSH), LT(2,KC_BSPC),
+
+                           LT(2,KC_SPACE), LT(3, KC_SPACE), OSM(MOD_LSFT),   KC_MS_BTN1, OSM(MOD_RSFT), LT(1,KC_ENT)
     ),
     [1] = LAYOUT_split_3x6_3(
         KC_TRNS,  KC_1,    KC_2,    KC_3,    KC_4,    KC_5,         	 KC_6,    KC_7,    KC_8,    KC_9,    KC_0,    KC_BSPC,
@@ -40,9 +40,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                            KC_TRNS, KC_TRNS, KC_TRNS,                       KC_MS_BTN1, KC_MS_BTN2, KC_MS_BTN3
     ),
     [2] = LAYOUT_split_3x6_3(
-        KC_TAB,   S(KC_1), KC_BSPC, KC_UP,   KC_DEL,  S(KC_5),              S(KC_6), KC_7,    KC_8,    KC_9,    S(KC_P), KC_BSPC,
-        KC_LCTL,  LAG(KC_LEFT), KC_LEFT, KC_DOWN, KC_RGHT, LAG(KC_RGHT),    KC_0,    KC_4,    KC_5,    KC_6,    KC_BSLS, KC_GRV,
-        KC_LSFT,  KC_NO,   KC_TAB,  KC_SPC,  KC_ENT,  KC_NO,                KC_0,    KC_1,    KC_2,    KC_3,    KC_ENT,  S(KC_GRV),
+        KC_VOLU,   KC_MPRV, KC_BSPC, KC_UP,   KC_DEL,  KC_MNXT,              S(KC_6), KC_7,    KC_8,    KC_9,    S(KC_P), KC_BSPC,
+        KC_MPLY,  LAG(KC_LEFT), KC_LEFT, KC_DOWN, KC_RGHT, LAG(KC_RGHT),    KC_0,    KC_4,    KC_5,    KC_6,    KC_BSLS, KC_GRV,
+        KC_VOLD,  KC_WWW_BACK,   OPT_T(KC_Z),  OPT_T(KC_I), OPT_T(KC_Y),  KC_WWW_FORWARD,       KC_0,    KC_1,    KC_2,    KC_3,    KC_ENT,  S(KC_GRV),
                            KC_LGUI, KC_TRNS, KC_SPC,                        KC_MS_BTN1, KC_MS_BTN2, KC_MS_BTN3
     ),
     [3] = LAYOUT_split_3x6_3(
@@ -64,7 +64,7 @@ float scroll_accumulated_v = 0;
 // Modify these to adjust non-linear mouse scaling
 #define MAX_SCALE 2
 #define MIN_SCALE 1
-#define GROWTH_FACTOR 1.8
+#define GROWTH_FACTOR 1.7
 #define MOMENTUM 0.01
 
 // Variable to store an exponential moving average scaling factor to denoise the non-linear scaling
@@ -89,34 +89,9 @@ int pressed_command = 0;
 // add non-linear scaling to all mouse movements
 void ps2_mouse_moved_user(report_mouse_t* mouse_report) {
     // alt-tab operation
-    if (layer_state_is(ALT_TAB_LAYER)) {
-        // send alt-tab when on this layer. On first mouse movement, press
-        // command.  Accumulate and sent tab or shift tab.  Release command
-        // when you leave this layer.
-
-        if ((mouse_report->x != 0) && (pressed_command == 0)) {
-          pressed_command = 1;
-          register_code(KC_LGUI);
-        }
-        accumulated_alt_tab += mouse_report->x;
-
-        // process queued clicks
-        if (accumulated_alt_tab <= -ALT_TAB_STEP){
-            tap_code16(LSFT(KC_TAB));
-            accumulated_alt_tab += ALT_TAB_STEP;
-        }
-        if (accumulated_alt_tab >= ALT_TAB_STEP) {
-            tap_code(KC_TAB);
-            accumulated_alt_tab -= ALT_TAB_STEP;
-        }
-
-        // return a null report
-        mouse_report->x = 0;
-        mouse_report->y = 0;
-    }
 
     // arrow key emulation
-    if (layer_state_is(ARROW_LAYER)) {
+    if (layer_state_is(ARROW_LAYER) || layer_state_is(ALT_TAB_LAYER)) {
         // with the trackpoint, it is nice to have it lock into a single
         // direction of travel until it is released
 
@@ -214,12 +189,6 @@ void ps2_mouse_moved_user(report_mouse_t* mouse_report) {
 }
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-  if ((!layer_state_is(ALT_TAB_LAYER)) && (pressed_command == 1)) {
-    // if you are not on layer 3, and command is pressed, release it.
-    pressed_command = 0;
-    unregister_code(KC_LGUI);
-  }
-
   if ((!layer_state_is(ARROW_LAYER)) && (arrow_mode != 0)) {
     // if you are not on layer 1, and the arrow mode is not zero, make it zero.
     arrow_mode = 0;
@@ -227,4 +196,113 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     arrow_y = 0;
   }
   return state;
+}
+
+void keyboard_post_init_user(void) {
+    pointing_device_set_cpi_on_side(true, 4000); //Set cpi on left side to a low value for slower scrolling.
+
+    // pointing_device_set_cpi_on_side(false, 8000); //Set cpi on right side to a reasonable value for mousing.
+}
+
+report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, report_mouse_t right_report) {
+	#define ARROW_LEFT_STEP 16
+	#define ARROW_LEFT_THRESH 1
+	#define ARROW_LEFT_RESET_THRESH 0.1
+	int arrow_mode = 0;
+	int arrow_x = 0;
+	int arrow_y = 0;
+
+
+    if (layer_state_is(ALT_TAB_LAYER)) {
+        if (arrow_mode == 0) {
+            if (abs(left_report.x) > ARROW_LEFT_THRESH) {
+                arrow_mode = 1;
+            }
+            if (abs(left_report.y) > ARROW_LEFT_THRESH) {
+                arrow_mode = 2;
+            }
+        }
+        if (arrow_mode == 1) {
+            if (left_report.x > ARROW_LEFT_RESET_THRESH) {
+            arrow_x += left_report.x - ARROW_LEFT_RESET_THRESH;
+            if (arrow_x > ARROW_LEFT_STEP) {
+                    arrow_x = 0;
+                    tap_code(KC_RIGHT);
+                }
+            }
+            else if (left_report.x < -ARROW_LEFT_RESET_THRESH) {
+                arrow_x += -left_report.x - ARROW_LEFT_RESET_THRESH;
+            if (arrow_x > ARROW_LEFT_STEP) {
+                    arrow_x = 0;
+                    tap_code(KC_LEFT);
+                }
+            }
+            else {
+                arrow_mode = 0;
+                arrow_x = 0;
+            }
+        }
+        if (arrow_mode == 2) {
+            if (left_report.y > ARROW_LEFT_RESET_THRESH) {
+            arrow_y += left_report.y - ARROW_LEFT_RESET_THRESH;
+            if (arrow_y > ARROW_LEFT_STEP) {
+                    arrow_y = 0;
+                    tap_code(KC_DOWN);
+                }
+            }
+            else if (left_report.y < -ARROW_LEFT_RESET_THRESH) {
+                arrow_y += -left_report.y -ARROW_LEFT_RESET_THRESH;
+            if (arrow_y > ARROW_LEFT_STEP) {
+                    arrow_y = 0;
+                    tap_code(KC_UP);
+                }
+            }
+            else {
+                arrow_mode = 0;
+                arrow_x = 0;
+                arrow_y = 0;
+            }
+        }
+        // return a null report
+        left_report.x = 0;
+        left_report.y = 0;
+    }
+    else {
+    	left_report.h = -left_report.x;
+     	left_report.v = -left_report.y;
+        left_report.x = 0;
+        left_report.y = 0;
+    }
+    return pointing_device_combine_reports(left_report, right_report);
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t* record) {
+  if (!process_achordion(keycode, record)) { return false; }
+
+  return true;
+}
+
+void matrix_scan_user(void) {
+  achordion_task();
+}
+
+uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
+  switch (tap_hold_keycode) {
+  	case LT(1, KC_ESC):
+    case CMD_T(KC_J):
+    case LT(1,KC_Z):
+      return 200;
+    case LT(3, KC_SPACE):
+    case LT(3, KC_TAB):
+    case LT(1,KC_ENT):
+    case LT(2,KC_TAB):
+    case LT(2,KC_BSPC):
+    case LT(2,KC_SPACE):
+    case LT(2,KC_QUOT):
+    case OSM(MOD_LSFT):
+    case OSM(MOD_RSFT):
+      return 0;  // Bypass Achordion for these keys.
+  }
+
+  return 450;  // Otherwise use a timeout of 800 ms.
 }

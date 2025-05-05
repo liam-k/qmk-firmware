@@ -24,23 +24,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define MASTER_RIGHT
 // #define EE_HANDS
 
-#define TAPPING_TERM 200  // Sets the maximum time (in milliseconds) for a key to be considered a tap
-
-#ifdef RGBLIGHT_ENABLE
-    #define RGBLIGHT_EFFECT_BREATHING
-    #define RGBLIGHT_EFFECT_RAINBOW_MOOD
-    #define RGBLIGHT_EFFECT_RAINBOW_SWIRL
-    #define RGBLIGHT_EFFECT_SNAKE
-    #define RGBLIGHT_EFFECT_KNIGHT
-    #define RGBLIGHT_EFFECT_CHRISTMAS
-    #define RGBLIGHT_EFFECT_STATIC_GRADIENT
-//  #define RGBLIGHT_EFFECT_RGB_TEST
-//  #define RGBLIGHT_EFFECT_ALTERNATING
-//  #define RGBLIGHT_EFFECT_TWINKLE
-    #define RGBLIGHT_LIMIT_VAL 120
-    #define RGBLIGHT_HUE_STEP 10
-    #define RGBLIGHT_SAT_STEP 17
-    #define RGBLIGHT_VAL_STEP 17
-#endif
+#define TAPPING_TERM 160  // Sets the maximum time (in milliseconds) for a key to be considered a tap
+#define ONESHOT_TAP_TOGGLE 2
 
 #define OLED_FONT_H "keyboards/crkbd/lib/glcdfont.c"
+
+#define SERIAL_USART_TX_PIN GP1  // Sets the USART TX pin to GP1 for serial communication
+
+#define MOUSE_EXTENDED_REPORT  // Enables extended mouse reports for more precise cursor control
+#define PS2_MOUSE_USE_REMOTE_MODE  // Uses remote mode for PS/2 mouse, which can be more reliable than streaming mode
+
+#define POINTING_DEVICE_DEBUG
+
+#define PS2_PIO_USE_PIO1  // Uses PIO1 for PS/2 communication instead of PIO0, which is used for serial
+
+#define PS2_MOUSE_INVERT_X  // Inverts the X-axis of the PS/2 mouse input
+#define PS2_MOUSE_INVERT_Y  // Inverts the Y-axis of the PS/2 mouse input
+#define PS2_DATA_PIN    GP2  // Sets the PS/2 data pin to GP2
+#define PS2_CLOCK_PIN   GP3  // Sets the PS/2 clock pin to GP3
