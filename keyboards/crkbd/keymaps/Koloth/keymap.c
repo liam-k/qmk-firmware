@@ -45,9 +45,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case BW_BSPC_L1:
       if (record->event.pressed) {
         bspc_l1_timer = timer_read();
-        layer_on(1); 
+        layer_on(1);
       } else {
-        layer_off(1); 
+        layer_off(1);
         if (timer_elapsed(bspc_l1_timer) < BW_TAP_TIME)
           tap_code(KC_BSPC);
       }
@@ -56,7 +56,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case BW_TAB_L2:
       if (record->event.pressed) {
         tab_l2_timer = timer_read();
-        layer_on(2); 
+        layer_on(2);
       } else {
         layer_off(2);
         if (timer_elapsed(tab_l2_timer) < BW_TAP_TIME)
@@ -67,9 +67,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case BW_BSPC_L3:
       if (record->event.pressed) {
         bspc_l3_timer = timer_read();
-        layer_on(3); 
+        layer_on(3);
       } else {
-        layer_off(3); 
+        layer_off(3);
         if (timer_elapsed(bspc_l3_timer) < BW_TAP_TIME)
           tap_code(KC_BSPC);
       }
@@ -78,7 +78,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case BW_TAB_L3:
       if (record->event.pressed) {
         tab_l3_timer = timer_read();
-        layer_on(3); 
+        layer_on(3);
       } else {
         layer_off(3);
         if (timer_elapsed(tab_l3_timer) < BW_TAP_TIME)
@@ -89,9 +89,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case BW_DELETE_CMD:
       if (record->event.pressed) {
         delete_cmd_timer = timer_read();
-        register_code(KC_LGUI); 
+        register_code(KC_LGUI);
       } else {
-        unregister_code(KC_LGUI); 
+        unregister_code(KC_LGUI);
         if (timer_elapsed(delete_cmd_timer) < BW_TAP_TIME)
           tap_code(KC_DEL);
       }
@@ -100,9 +100,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case BW_ENTER_CTL:
       if (record->event.pressed) {
         enter_ctl_timer = timer_read();
-        register_code(KC_LCTL); 
+        register_code(KC_LCTL);
       } else {
-        unregister_code(KC_LCTL); 
+        unregister_code(KC_LCTL);
         if (timer_elapsed(enter_ctl_timer) < BW_TAP_TIME)
           tap_code(KC_ENT);
       }
@@ -111,40 +111,40 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     case BW_ESC_ALT:
       if (record->event.pressed) {
         esc_alt_timer = timer_read();
-        register_code(KC_RALT); 
+        register_code(KC_RALT);
       } else {
-        unregister_code(KC_RALT); 
+        unregister_code(KC_RALT);
         if (timer_elapsed(esc_alt_timer) < BW_TAP_TIME)
           tap_code(KC_ESC);
       }
-      return false; 
+      return false;
   }
   return true;
 }
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[0] = LAYOUT_split_3x6_3(
-        KC_GRV,  KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_BSLS, 
-        CW_TOGG, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT, 
-        KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, 
+        KC_GRV,  KC_Q, KC_W, KC_E, KC_R, KC_T, KC_Y, KC_U, KC_I, KC_O, KC_P, KC_BSLS,
+        CW_TOGG, KC_A, KC_S, KC_D, KC_F, KC_G, KC_H, KC_J, KC_K, KC_L, KC_SCLN, KC_QUOT,
+        KC_LSFT, KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT,
         BW_DELETE_CMD, BW_BSPC_L1, BW_ENTER_CTL, KC_SPC, BW_TAB_L2, BW_ESC_ALT
         ),
 	[1] = LAYOUT_split_3x6_3(
-        KC_NO, KC_EXLM, KC_AT, KC_LBRC, KC_RBRC, KC_AMPR, KC_PSLS, KC_P7, KC_P8, KC_P9, KC_PMNS, KC_NO, 
-        KC_NO, KC_HASH, KC_DLR, KC_LPRN, KC_RPRN, KC_PEQL, KC_ASTR, KC_P4, KC_P5, KC_P6, KC_PLUS, KC_NO, 
-        KC_LSFT, KC_PERC, KC_CIRC, KC_LCBR, KC_RCBR, KC_UNDS, KC_P0, KC_P1, KC_P2, KC_P3, KC_PDOT, KC_RSFT, 
+        KC_NO, KC_EXLM, KC_AT, KC_LBRC, KC_RBRC, KC_AMPR, KC_PSLS, KC_P7, KC_P8, KC_P9, KC_PMNS, KC_NO,
+        KC_NO, KC_HASH, KC_DLR, KC_LPRN, KC_RPRN, KC_PEQL, KC_ASTR, KC_P4, KC_P5, KC_P6, KC_PLUS, KC_NO,
+        KC_LSFT, KC_PERC, KC_CIRC, KC_LCBR, KC_RCBR, KC_UNDS, KC_P0, KC_P1, KC_P2, KC_P3, KC_PDOT, KC_RSFT,
         BW_DELETE_CMD, KC_TRNS, BW_ENTER_CTL, KC_SPC, BW_TAB_L3, BW_ESC_ALT
         ),
 	[2] = LAYOUT_split_3x6_3(
-        KC_NO, KC_PGUP, KC_HOME, KC_UP, KC_END, KC_NO, LCA(KC_D), LCA(KC_LEFT), LCA(KC_ENT), LCA(KC_T), LCA(KC_RGHT), KC_NO, 
-        KC_NO, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_NO, KC_BTN1, KC_BTN2, KC_BTN3, RCS(KC_TAB), RCTL(KC_TAB), RGUI(KC_BSLS), 
-        KC_LSFT, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, LCAG(KC_SPC), LALT(KC_GRV), LGUI(KC_GRV), SGUI(KC_4), LCAG(KC_SLSH), KC_RSFT, 
+        KC_NO, KC_PGUP, KC_HOME, KC_UP, KC_END, KC_NO, LCA(KC_D), LCA(KC_LEFT), LCA(KC_ENT), LCA(KC_T), LCA(KC_RGHT), KC_NO,
+        KC_NO, KC_PGDN, KC_LEFT, KC_DOWN, KC_RGHT,  KC_NO, KC_BTN1, KC_BTN2, KC_BTN3, RCS(KC_TAB), RCTL(KC_TAB), RGUI(KC_BSLS),
+        KC_LSFT, KC_NO, KC_NO, KC_NO, KC_NO, KC_NO, LCAG(KC_SPC), LALT(KC_GRV), LGUI(KC_GRV), SGUI(KC_4), LCAG(KC_SLSH), KC_RSFT,
         BW_DELETE_CMD, BW_BSPC_L3, BW_ENTER_CTL, KC_SPC, KC_TRNS, BW_ESC_ALT
         ),
 	[3] = LAYOUT_split_3x6_3(
-        KC_NO, KC_NO, KC_BRIU, KC_VOLU, KC_MFFD, KC_NO, KC_NO, KC_F7, KC_F8, KC_F9, KC_F12, KC_NO, 
-        KC_NO, KC_NO, KC_BRID, KC_VOLD, KC_MPLY, KC_NO, KC_NO, KC_F4, KC_F5, KC_F6, KC_F11, KC_NO, 
-        KC_NO, KC_NO, KC_NO, KC_MUTE, KC_MRWD, KC_NO, KC_NO, KC_F1, KC_F2, KC_F3, KC_F10, KC_NO, 
+        KC_NO, KC_NO, KC_BRIU, KC_VOLU, KC_MFFD, KC_NO, KC_NO, KC_F7, KC_F8, KC_F9, KC_F12, KC_NO,
+        KC_NO, KC_NO, KC_BRID, KC_VOLD, KC_MPLY, KC_NO, KC_NO, KC_F4, KC_F5, KC_F6, KC_F11, KC_NO,
+        KC_NO, KC_NO, KC_NO, KC_MUTE, KC_MRWD, KC_NO, KC_NO, KC_F1, KC_F2, KC_F3, KC_F10, KC_NO,
         BW_DELETE_CMD, KC_TRNS, BW_ENTER_CTL, KC_SPC, KC_TRNS, BW_ESC_ALT
         )};
 
@@ -193,7 +193,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
           register_code(KC_LGUI);
         }
         accumulated_alt_tab += mouse_report.x;
-    
+
         // process queued clicks
         if (accumulated_alt_tab <= -ALT_TAB_STEP){
             tap_code16(LSFT(KC_TAB));
@@ -203,7 +203,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
             tap_code(KC_TAB);
             accumulated_alt_tab -= ALT_TAB_STEP;
         }
-        
+
         // return a null report
         mouse_report.x = 0;
         mouse_report.y = 0;
@@ -225,17 +225,17 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
         // you should strongly prefer vertical movement to bias against
         // accidental sideways clicks.  Almost all text scrolling is
         // orthogonal, so this helps suppress diagonal motion.  Think of it
-        // as if you are in a box, and you move when you hit an edge, 
-        // resetting to the center each time.  
+        // as if you are in a box, and you move when you hit an edge,
+        // resetting to the center each time.
 
         // This version additionally keeps a running average and only allows
-        // motion in the direction of the recent average 
+        // motion in the direction of the recent average
 
         // update the accumulated arrow momentum
         average_arrow_x = average_arrow_x*ARROW_MOMENTUM + (float) mouse_report.x*(1-ARROW_MOMENTUM);
         average_arrow_y = average_arrow_y*ARROW_MOMENTUM + (float) mouse_report.y*(1-ARROW_MOMENTUM);
 
-        // kill accumulated clicks orthogonal to average direction           
+        // kill accumulated clicks orthogonal to average direction
         if (fabs(average_arrow_x) > fabs(average_arrow_y)){
             accumulated_arrow_x += mouse_report.x;
             accumulated_arrow_y = 0;
@@ -244,7 +244,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
             accumulated_arrow_x = 0;
             accumulated_arrow_y += mouse_report.y;
         }
-    
+
         // process queued clicks
         if (accumulated_arrow_x <= -ARROW_STEP){
             tap_code(KC_LEFT);
@@ -262,7 +262,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
             tap_code(KC_DOWN);
             accumulated_arrow_y -= ARROW_STEP;
         }
-        
+
         // return a null report
         mouse_report.x = 0;
         mouse_report.y = 0;
@@ -311,16 +311,16 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 layer_state_t layer_state_set_user(layer_state_t state) {
     switch (get_highest_layer(state)) {
     case 0:
-        pimoroni_trackball_set_rgbw(0,0,0,255);
+        // pimoroni_trackball_set_rgbw(0,0,0,255);
         break;
     case 1:
-        pimoroni_trackball_set_rgbw(192,0,64,0);
+        // pimoroni_trackball_set_rgbw(192,0,64,0);
         break;
     case 2:
-        pimoroni_trackball_set_rgbw(0,192,128,0);
+        // pimoroni_trackball_set_rgbw(0,192,128,0);
         break;
     case 3:
-        pimoroni_trackball_set_rgbw(153,113,0,0);
+        // pimoroni_trackball_set_rgbw(153,113,0,0);
         break;
     }
   return state;
@@ -328,13 +328,13 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 void keyboard_post_init_user(void) {
     // default trackball to white
-	pimoroni_trackball_set_rgbw(0,0,0,255);
+	// pimoroni_trackball_set_rgbw(0,0,0,255);
 }
 
 void suspend_power_down_user(void) {
-	pimoroni_trackball_set_rgbw(0,0,0,0);
+	// pimoroni_trackball_set_rgbw(0,0,0,0);
 }
 
 void suspend_wakeup_init_user(void) {
-    pimoroni_trackball_set_rgbw(0,0,0,255);
+    // pimoroni_trackball_set_rgbw(0,0,0,255);
 }
