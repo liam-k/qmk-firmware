@@ -9,7 +9,7 @@ SERIAL_DRIVER = vendor
 # PS2_ENABLE = yes
 PS2_DRIVER = vendor
 
-SRC += features/achordion.c
+# SRC += features/achordion.c
 
 
 ## FLASH COMMAND:

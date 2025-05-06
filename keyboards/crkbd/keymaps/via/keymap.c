@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <math.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include "features/achordion.h"
 
 #include QMK_KEYBOARD_H
 
@@ -276,33 +275,69 @@ report_mouse_t pointing_device_task_combined_user(report_mouse_t left_report, re
     return pointing_device_combine_reports(left_report, right_report);
 }
 
+// Define handedness for each key position (using LAYOUT_split_3x6_3 macro)
+const char chordal_hold_layout[MATRIX_ROWS][MATRIX_COLS] PROGMEM =
+    LAYOUT_split_3x6_3(
+        'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R',
+        'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R',
+        'L', 'L', 'L', 'L', 'L', 'L',   'R', 'R', 'R', 'R', 'R', 'R',
+                  'L', 'L', 'L',         'R', 'R', 'R'
+    );
+
+// Custom Chordal Hold behavior for specific key combinations
+bool get_chordal_hold(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record,
+                      uint16_t other_keycode, keyrecord_t* other_record) {
+    // Special case for Control+C, Control+V, etc.
+    if ((tap_hold_keycode == CTL_T(KC_S) && 
+         (other_keycode == KC_C || other_keycode == KC_X || other_keycode == KC_V)) ||
+        (tap_hold_keycode == CTL_T(KC_L) && 
+         (other_keycode == KC_C || other_keycode == KC_X || other_keycode == KC_V))) {
+        return true;  // Allow common shortcuts even on same hand
+    }
+    
+    // For home row mods, be more restrictive with same-hand alphanumeric keys
+    if ((tap_hold_keycode == CTL_T(KC_S) || 
+         tap_hold_keycode == OPT_T(KC_D) || 
+         tap_hold_keycode == CMD_T(KC_F) || 
+         tap_hold_keycode == CMD_T(KC_J) || 
+         tap_hold_keycode == OPT_T(KC_K) || 
+         tap_hold_keycode == CTL_T(KC_L))) {
+        
+        // If other key is an alphanumeric on same hand, consider it a tap
+        if ((KC_A <= other_keycode && other_keycode <= KC_Z) || 
+            (KC_1 <= other_keycode && other_keycode <= KC_0) ||
+            other_keycode == KC_SPACE || other_keycode == KC_BSPC || 
+            other_keycode == KC_TAB || other_keycode == KC_ENT) {
+            
+            // Check if they're on the same hand
+            if (!get_chordal_hold_default(tap_hold_record, other_record)) {
+                return false;  // Same hand alphanumeric = tap
+            }
+        }
+    }
+    
+    // Otherwise use the default opposite hands rule
+    return get_chordal_hold_default(tap_hold_record, other_record);
+}
+
+// Per-key TAPPING_TERM
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        // Home row mods get different tapping term
+        case CTL_T(KC_S): 
+        case OPT_T(KC_D): 
+        case CMD_T(KC_F): 
+        case CMD_T(KC_J): 
+        case OPT_T(KC_K): 
+        case CTL_T(KC_L):
+            return 180;  // Slightly faster than default
+            
+        default:
+            return TAPPING_TERM;
+    }
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t* record) {
-  if (!process_achordion(keycode, record)) { return false; }
-
+  // Process standard QMK features
   return true;
-}
-
-void matrix_scan_user(void) {
-  achordion_task();
-}
-
-uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
-  switch (tap_hold_keycode) {
-  	case LT(1, KC_ESC):
-    case CMD_T(KC_J):
-    case LT(1,KC_Z):
-      return 200;
-    case LT(3, KC_SPACE):
-    case LT(3, KC_TAB):
-    case LT(1,KC_ENT):
-    case LT(2,KC_TAB):
-    case LT(2,KC_BSPC):
-    case LT(2,KC_SPACE):
-    case LT(2,KC_QUOT):
-    case OSM(MOD_LSFT):
-    case OSM(MOD_RSFT):
-      return 0;  // Bypass Achordion for these keys.
-  }
-
-  return 450;  // Otherwise use a timeout of 800 ms.
 }

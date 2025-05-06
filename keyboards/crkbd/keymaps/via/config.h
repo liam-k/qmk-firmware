@@ -24,7 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // #define MASTER_RIGHT
 // #define EE_HANDS
 
-#define TAPPING_TERM 160  // Sets the maximum time (in milliseconds) for a key to be considered a tap
+// Chordal Hold configuration
+#define CHORDAL_HOLD
+#define PERMISSIVE_HOLD
+#define TAPPING_TERM 200  // Increased from 160ms to account for Chordal Hold's combined timing
+#define TAPPING_TERM_PER_KEY
 #define ONESHOT_TAP_TOGGLE 2
 
 #define OLED_FONT_H "keyboards/crkbd/lib/glcdfont.c"
